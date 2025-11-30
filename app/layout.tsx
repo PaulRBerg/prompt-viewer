@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Instrument_Serif,
-  JetBrains_Mono,
-  Source_Serif_4,
-} from "next/font/google";
+import { Instrument_Serif, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";

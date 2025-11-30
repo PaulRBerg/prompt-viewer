@@ -7,8 +7,8 @@ const tabStyles = tv({
   base: "relative cursor-pointer px-4 py-2 font-medium text-sm transition-colors",
   variants: {
     active: {
-      true: "text-[#C47D5A]",
       false: "text-muted hover:text-foreground",
+      true: "text-[#C47D5A]",
     },
   },
 });
@@ -23,11 +23,7 @@ type ProjectSwitcherProps = {
   onSelect: (slug: ProjectSlug) => void;
 };
 
-export function ProjectSwitcher({
-  projects,
-  activeProject,
-  onSelect,
-}: ProjectSwitcherProps) {
+export function ProjectSwitcher({ projects, activeProject, onSelect }: ProjectSwitcherProps) {
   const activeIndex = projects.findIndex((p) => p.slug === activeProject);
 
   return (
@@ -48,8 +44,8 @@ export function ProjectSwitcher({
         <div
           className={indicatorStyles()}
           style={{
-            width: `${100 / projects.length}%`,
             transform: `translateX(${activeIndex * 100}%)`,
+            width: `${100 / projects.length}%`,
           }}
         />
       )}
