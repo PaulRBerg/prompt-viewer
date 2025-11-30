@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DA7756"/>
+      <stop offset="100%" stop-color="#C4654A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+
+  <!-- Claude-inspired starburst with 4 elongated points -->
+  <g transform="translate(256, 256)">
+    <!-- Vertical elongated diamond -->
+    <path d="M0 -160 Q24 0 0 160 Q-24 0 0 -160" fill="white"/>
+    <!-- Horizontal elongated diamond -->
+    <path d="M-160 0 Q0 24 160 0 Q0 -24 -160 0" fill="white"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="28" fill="white"/>
+  </g>
+</svg>
