@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DateTime } from "effect";
 import type { ProjectConfig, ProjectSlug, PromptFile } from "@/lib/prompts/types";
 import { ProjectSwitcher } from "./ProjectSwitcher";
 import { SearchBar } from "./SearchBar";
@@ -15,8 +16,7 @@ type PromptViewerProps = {
 };
 
 function getTodayDate(): string {
-	const today = new Date();
-	return today.toISOString().split("T")[0];
+	return DateTime.formatIsoDateUtc(DateTime.unsafeMake(new Date()));
 }
 
 export function PromptViewer({
