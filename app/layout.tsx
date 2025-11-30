@@ -1,27 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Instrument_Serif,
+  JetBrains_Mono,
+  Source_Serif_4,
+} from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 
-const geistSans = Geist({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-instrument-serif",
+  weight: ["400"],
 });
 
-const geistMono = Geist_Mono({
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-source-serif",
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("HomePage");
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
-  return {
-    description: t("description"),
-    title: t("title"),
-  };
-}
+export const metadata: Metadata = {
+  description: "Browse your Claude prompt archives",
+  title: "Prompt Viewer",
+};
 
 export default async function RootLayout({
   children,
@@ -33,7 +39,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${instrumentSerif.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} antialiased`}
+      >
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
