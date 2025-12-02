@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import { tv } from "tailwind-variants";
 import type { ProjectConfig, ProjectSlug } from "@/lib/prompts/types";
 
@@ -25,13 +26,28 @@ type ProjectSwitcherProps = {
 
 export function ProjectSwitcher({ projects, activeProject, onSelect }: ProjectSwitcherProps) {
   const activeIndex = projects.findIndex((p) => p.slug === activeProject);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  useLayoutEffect(() => {
+    const activeTab = tabRefs.current[activeIndex];
+    if (activeTab) {
+      setIndicator({
+        left: activeTab.offsetLeft,
+        width: activeTab.offsetWidth,
+      });
+    }
+  }, [activeIndex]);
 
   return (
     <div className="relative border-border border-b">
       <div className="flex gap-2">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <button
             key={project.slug}
+            ref={(el) => {
+              tabRefs.current[index] = el;
+            }}
             type="button"
             onClick={() => onSelect(project.slug)}
             className={tabStyles({ active: project.slug === activeProject })}
@@ -40,12 +56,12 @@ export function ProjectSwitcher({ projects, activeProject, onSelect }: ProjectSw
           </button>
         ))}
       </div>
-      {activeIndex !== -1 && (
+      {activeIndex !== -1 && indicator.width > 0 && (
         <div
           className={indicatorStyles()}
           style={{
-            transform: `translateX(${activeIndex * 100}%)`,
-            width: `${100 / projects.length}%`,
+            transform: `translateX(${indicator.left}px)`,
+            width: `${indicator.width}px`,
           }}
         />
       )}
