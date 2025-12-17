@@ -18,6 +18,6 @@ export default async function HomePage() {
   const projects = projectSlugs.map((slug) => PROJECTS[slug]);
 
   return (
-    <PromptViewer projects={projects} initialProject={DEFAULT_PROJECT} projectData={projectData} />
+    <PromptViewer initialProject={DEFAULT_PROJECT} projectData={projectData} projects={projects} />
   );
 }

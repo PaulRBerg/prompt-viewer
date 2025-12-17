@@ -1,4 +1,4 @@
-export type ProjectSlug = "new-ui" | "old-ui";
+export type ProjectSlug = "new-ui" | "old-ui" | "effect-web3" | "effect-next";
 
 export type ProjectConfig = {
   name: string;

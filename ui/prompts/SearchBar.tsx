@@ -16,20 +16,20 @@ type SearchBarProps = {
 export function SearchBar({ value, onChange, placeholder = "Search prompts..." }: SearchBarProps) {
   return (
     <div className="relative">
-      <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
       <input
-        type="text"
-        value={value}
+        className={inputStyles()}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={inputStyles()}
+        type="text"
+        value={value}
       />
       {value && (
         <button
-          type="button"
-          onClick={() => onChange("")}
-          className="-translate-y-1/2 absolute top-1/2 right-3 text-muted transition-colors hover:text-foreground"
           aria-label="Clear search"
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted transition-colors hover:text-foreground"
+          onClick={() => onChange("")}
+          type="button"
         >
           <X className="h-4 w-4" />
         </button>

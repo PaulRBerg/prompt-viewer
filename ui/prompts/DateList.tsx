@@ -75,23 +75,23 @@ export function DateList({ files, expandedDate, onDateClick, searchQuery }: Date
         return (
           <div key={file.date}>
             <button
-              type="button"
-              onClick={() => onDateClick(file.date)}
-              className={dateButtonStyles({ expanded: isExpanded })}
-              aria-expanded={isExpanded}
               aria-controls={entriesId}
+              aria-expanded={isExpanded}
+              className={dateButtonStyles({ expanded: isExpanded })}
+              onClick={() => onDateClick(file.date)}
+              type="button"
             >
               <span>{formattedDate}</span>
               <ChevronRight className={chevronStyles({ expanded: isExpanded })} />
             </button>
 
-            <div id={entriesId} className={entriesContainerStyles({ expanded: isExpanded })}>
+            <div className={entriesContainerStyles({ expanded: isExpanded })} id={entriesId}>
               <div className="overflow-hidden">
                 <div className="space-y-4 bg-background px-4 py-4">
                   {displayEntries.map((entry, index) => (
                     <div
-                      key={`${file.date}-${entry.time}-${index}`}
                       className="border-border border-l-2 pl-4"
+                      key={`${file.date}-${entry.time}-${index}`}
                     >
                       <div className="mb-2 flex items-baseline gap-3">
                         <time className="font-mono text-muted text-xs">{entry.time}</time>
@@ -131,7 +131,7 @@ function HighlightedContent({ content, query }: { content: string; query: string
     <p className="whitespace-pre-wrap text-foreground">
       {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <mark key={i} className="bg-accent/20 text-foreground">
+          <mark className="bg-accent/20 text-foreground" key={i}>
             {part}
           </mark>
         ) : (

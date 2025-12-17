@@ -44,13 +44,13 @@ export function ProjectSwitcher({ projects, activeProject, onSelect }: ProjectSw
       <div className="flex gap-2">
         {projects.map((project, index) => (
           <button
+            className={tabStyles({ active: project.slug === activeProject })}
             key={project.slug}
+            onClick={() => onSelect(project.slug)}
             ref={(el) => {
               tabRefs.current[index] = el;
             }}
             type="button"
-            onClick={() => onSelect(project.slug)}
-            className={tabStyles({ active: project.slug === activeProject })}
           >
             {project.name}
           </button>

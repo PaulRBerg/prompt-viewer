@@ -6,6 +6,16 @@ import type { ProjectConfig, ProjectSlug } from "./types";
 export const PROMPTS_ROOT = `${homedir()}/.claude-prompts`;
 
 export const PROJECTS: Record<ProjectSlug, ProjectConfig> = {
+  "effect-next": {
+    directory: "projects-effect-next",
+    name: "Effect Next",
+    slug: "effect-next",
+  },
+  "effect-web3": {
+    directory: "projects-effect-web3",
+    name: "Effect Web3",
+    slug: "effect-web3",
+  },
   "new-ui": {
     directory: "sablier-new-ui",
     name: "New UI",

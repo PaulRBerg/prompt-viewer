@@ -51,14 +51,14 @@ export function PromptViewer({ projects, initialProject, projectData }: PromptVi
       </header>
 
       <div className="mb-6">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search prompts..." />
+        <SearchBar onChange={setSearchQuery} placeholder="Search prompts..." value={searchQuery} />
       </div>
 
       <div className="mb-6">
         <ProjectSwitcher
-          projects={projects}
           activeProject={activeProject}
           onSelect={handleProjectChange}
+          projects={projects}
         />
       </div>
 
@@ -67,8 +67,8 @@ export function PromptViewer({ projects, initialProject, projectData }: PromptVi
           <div className="p-8 text-center text-muted">No prompts found for this project.</div>
         ) : (
           <DateList
-            files={currentFiles}
             expandedDate={expandedDate}
+            files={currentFiles}
             onDateClick={handleDateClick}
             searchQuery={searchQuery}
           />
