@@ -1,23 +1,22 @@
 import { DEFAULT_PROJECT, PROJECTS } from "@/lib/prompts/config";
-import { loadProject } from "@/lib/prompts/loader";
-import type { ProjectSlug, PromptFile } from "@/lib/prompts/types";
+import { loadProject, toClientPayload } from "@/lib/prompts/loader";
+import type { ProjectSlug } from "@/lib/prompts/types";
 import { PromptViewer } from "@/ui/prompts/PromptViewer";
 
 export default async function HomePage() {
   const projectSlugs = Object.keys(PROJECTS) as ProjectSlug[];
 
-  // Load all project data in parallel
-  const projectDataEntries = await Promise.all(
-    projectSlugs.map(async (slug) => {
-      const data = await loadProject(slug);
-      return [slug, data.files] as [ProjectSlug, PromptFile[]];
-    }),
-  );
+  // Load only default project initially
+  const defaultProjectData = await loadProject(DEFAULT_PROJECT);
+  const defaultFiles = defaultProjectData.files.map(toClientPayload);
 
-  const projectData = Object.fromEntries(projectDataEntries) as Record<ProjectSlug, PromptFile[]>;
   const projects = projectSlugs.map((slug) => PROJECTS[slug]);
 
   return (
-    <PromptViewer initialProject={DEFAULT_PROJECT} projectData={projectData} projects={projects} />
+    <PromptViewer
+      initialFiles={defaultFiles}
+      initialProject={DEFAULT_PROJECT}
+      projects={projects}
+    />
   );
 }

@@ -30,3 +30,24 @@ export type ProjectData = {
   project: ProjectConfig;
   files: PromptFile[];
 };
+
+// Client-side payload should NOT include rawContent
+export type PromptFileClient = Omit<PromptFile, "rawContent">;
+
+export type SearchResult = {
+  date: string;
+  time: string;
+  sessionId: string;
+  excerpt: string;
+  matchStart: number;
+  matchEnd: number;
+};
+
+export type SearchRequest = {
+  project: ProjectSlug;
+  query: string;
+};
+
+export type SearchResponse = {
+  results: SearchResult[];
+};

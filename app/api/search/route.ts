@@ -46,7 +46,12 @@ function searchEntries(files: PromptFile[], query: string): SearchResult[] {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as SearchRequest;
+    let body: SearchRequest;
+    try {
+      body = (await request.json()) as SearchRequest;
+    } catch {
+      return NextResponse.json<SearchAPIResponse>({ error: "Invalid JSON body" }, { status: 400 });
+    }
     const { project, query } = body;
 
     // Validate project

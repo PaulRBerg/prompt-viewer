@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { tv } from "tailwind-variants";
 
 const inputStyles = tv({
@@ -11,12 +11,22 @@ type SearchBarProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  isSearching?: boolean;
 };
 
-export function SearchBar({ value, onChange, placeholder = "Search prompts..." }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChange,
+  placeholder = "Search prompts...",
+  isSearching = false,
+}: SearchBarProps) {
   return (
     <div className="relative">
-      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
+      {isSearching ? (
+        <Loader2 className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 animate-spin text-muted" />
+      ) : (
+        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
+      )}
       <input
         className={inputStyles()}
         onChange={(e) => onChange(e.target.value)}

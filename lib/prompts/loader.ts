@@ -4,7 +4,14 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import matter from "gray-matter";
 import { PROJECTS, PROMPTS_ROOT } from "./config";
-import type { ProjectData, ProjectSlug, PromptEntry, PromptFile, PromptFrontmatter } from "./types";
+import type {
+  ProjectData,
+  ProjectSlug,
+  PromptEntry,
+  PromptFile,
+  PromptFileClient,
+  PromptFrontmatter,
+} from "./types";
 
 const TIME_PATTERN = /^## (\d{2}:\d{2}:\d{2})/;
 const SESSION_ID_PATTERN = /_Session ID: ([^\n]+)_/;
@@ -137,4 +144,15 @@ export async function loadAllProjects(): Promise<ProjectData[]> {
   const slugs = Object.keys(PROJECTS) as ProjectSlug[];
   const projects = await Promise.all(slugs.map((slug) => loadProject(slug)));
   return projects;
+}
+
+/**
+ * Convert PromptFile to client-safe payload (remove rawContent)
+ */
+export function toClientPayload(file: PromptFile): PromptFileClient {
+  return {
+    date: file.date,
+    entries: file.entries,
+    frontmatter: file.frontmatter,
+  };
 }

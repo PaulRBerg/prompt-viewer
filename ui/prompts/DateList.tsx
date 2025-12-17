@@ -1,15 +1,9 @@
 "use client";
 
-import { DateTime } from "effect";
 import { ChevronRight } from "lucide-react";
 import { tv } from "tailwind-variants";
-import type { PromptFile } from "@/lib/prompts/types";
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+import { formatDate } from "@/lib/prompts/format-date";
+import type { PromptFileClient } from "@/lib/prompts/types";
 
 const dateButtonStyles = tv({
   base: "flex w-full cursor-pointer items-center justify-between border-border border-b px-4 py-3 text-left font-serif text-lg transition-colors hover:bg-muted/50",
@@ -31,46 +25,19 @@ const chevronStyles = tv({
   },
 });
 
-const entriesContainerStyles = tv({
-  base: "grid transition-all duration-300 ease-in-out",
-  variants: {
-    expanded: {
-      false: "grid-rows-[0fr]",
-      true: "grid-rows-[1fr]",
-    },
-  },
-});
-
 type DateListProps = {
-  files: PromptFile[];
+  files: PromptFileClient[];
   expandedDate: string | null;
   onDateClick: (date: string) => void;
-  searchQuery?: string;
 };
 
-export function DateList({ files, expandedDate, onDateClick, searchQuery }: DateListProps) {
-  // Filter files if search query exists (files are pre-sorted by loader)
-  const displayFiles = searchQuery
-    ? files.filter((file) =>
-        file.entries.some((entry) =>
-          entry.content.toLowerCase().includes(searchQuery.toLowerCase()),
-        ),
-      )
-    : files;
-
+export function DateList({ files, expandedDate, onDateClick }: DateListProps) {
   return (
     <div className="space-y-0">
-      {displayFiles.map((file) => {
+      {files.map((file) => {
         const isExpanded = expandedDate === file.date;
-        const formattedDate = DateTime.formatIntl(DateTime.unsafeMake(file.date), dateFormatter);
+        const formattedDate = formatDate(file.date);
         const entriesId = `entries-${file.date}`;
-
-        // Filter entries if search query exists
-        const displayEntries = searchQuery
-          ? file.entries.filter((entry) =>
-              entry.content.toLowerCase().includes(searchQuery.toLowerCase()),
-            )
-          : file.entries;
 
         return (
           <div key={file.date}>
@@ -85,59 +52,31 @@ export function DateList({ files, expandedDate, onDateClick, searchQuery }: Date
               <ChevronRight className={chevronStyles({ expanded: isExpanded })} />
             </button>
 
-            <div className={entriesContainerStyles({ expanded: isExpanded })} id={entriesId}>
-              <div className="overflow-hidden">
-                <div className="space-y-4 bg-background px-4 py-4">
-                  {displayEntries.map((entry, index) => (
-                    <div
-                      className="border-border border-l-2 pl-4"
-                      key={`${file.date}-${entry.time}-${index}`}
-                    >
-                      <div className="mb-2 flex items-baseline gap-3">
-                        <time className="font-mono text-muted text-xs">{entry.time}</time>
-                        {entry.sessionId && (
-                          <span className="font-mono text-muted/70 text-xs">
-                            {entry.sessionId.slice(0, 8)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="prose prose-sm max-w-none">
-                        {searchQuery ? (
-                          <HighlightedContent content={entry.content} query={searchQuery} />
-                        ) : (
-                          <p className="whitespace-pre-wrap text-foreground">{entry.content}</p>
-                        )}
-                      </div>
+            {isExpanded && (
+              <div className="space-y-4 bg-background px-4 py-4" id={entriesId}>
+                {file.entries.map((entry, index) => (
+                  <div
+                    className="border-border border-l-2 pl-4"
+                    key={`${file.date}-${entry.time}-${index}`}
+                  >
+                    <div className="mb-2 flex items-baseline gap-3">
+                      <time className="font-mono text-muted text-xs">{entry.time}</time>
+                      {entry.sessionId && (
+                        <span className="font-mono text-muted/70 text-xs">
+                          {entry.sessionId.slice(0, 8)}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
+                    <div className="prose prose-sm max-w-none">
+                      <p className="whitespace-pre-wrap text-foreground">{entry.content}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         );
       })}
     </div>
-  );
-}
-
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function HighlightedContent({ content, query }: { content: string; query: string }) {
-  const parts = content.split(new RegExp(`(${escapeRegex(query)})`, "gi"));
-
-  return (
-    <p className="whitespace-pre-wrap text-foreground">
-      {parts.map((part, i) =>
-        part.toLowerCase() === query.toLowerCase() ? (
-          <mark className="bg-accent/20 text-foreground" key={i}>
-            {part}
-          </mark>
-        ) : (
-          <span key={i}>{part}</span>
-        ),
-      )}
-    </p>
   );
 }

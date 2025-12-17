@@ -1,6 +1,6 @@
 {
-  "name": "@prb/next-template",
-  "description": "Next.js template for building web applications.",
+  "name": "prompt-viewer",
+  "description": "A web application for browsing archived Claude conversation prompts, organized by project and date.",
   "private": true,
   "version": "1.0.0",
   "dependencies": {

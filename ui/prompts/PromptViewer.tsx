@@ -2,41 +2,74 @@
 
 import { DateTime } from "effect";
 import { useState } from "react";
-import type { ProjectConfig, ProjectSlug, PromptFile } from "@/lib/prompts/types";
+import type { ProjectConfig, ProjectSlug, PromptFileClient } from "@/lib/prompts/types";
 import { DateList } from "./DateList";
+import { useSearch } from "./hooks/useSearch";
 import { ProjectSwitcher } from "./ProjectSwitcher";
 import { SearchBar } from "./SearchBar";
+import { SearchResults } from "./SearchResults";
 
-type ProjectDataMap = Record<ProjectSlug, PromptFile[]>;
+type ProjectDataMap = Partial<Record<ProjectSlug, PromptFileClient[]>>;
 
 type PromptViewerProps = {
   projects: ProjectConfig[];
   initialProject: ProjectSlug;
-  projectData: ProjectDataMap;
+  initialFiles: PromptFileClient[];
 };
 
 function getTodayDate(): string {
   return DateTime.formatIsoDateUtc(DateTime.unsafeMake(new Date()));
 }
 
-export function PromptViewer({ projects, initialProject, projectData }: PromptViewerProps) {
+export function PromptViewer({ projects, initialProject, initialFiles }: PromptViewerProps) {
   const [activeProject, setActiveProject] = useState<ProjectSlug>(initialProject);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [projectData, setProjectData] = useState<ProjectDataMap>(() => ({
+    [initialProject]: initialFiles,
+  }));
+  const [loadingProject, setLoadingProject] = useState<ProjectSlug | null>(null);
   const [expandedDate, setExpandedDate] = useState<string | null>(() => {
     // Auto-expand today's date if it exists
     const today = getTodayDate();
-    const files = projectData[initialProject];
-    return files.some((f) => f.date === today) ? today : (files[0]?.date ?? null);
+    return initialFiles.some((f) => f.date === today) ? today : (initialFiles[0]?.date ?? null);
   });
+
+  const { inputValue, setInputValue, results, isSearching, hasActiveSearch } =
+    useSearch(activeProject);
 
   const currentFiles = projectData[activeProject] ?? [];
 
-  function handleProjectChange(slug: ProjectSlug) {
+  async function handleProjectChange(slug: ProjectSlug) {
     setActiveProject(slug);
-    // Reset expanded date to most recent in new project
-    const files = projectData[slug] ?? [];
-    const today = getTodayDate();
-    setExpandedDate(files.some((f) => f.date === today) ? today : (files[0]?.date ?? null));
+
+    // Load project data if not already cached
+    if (!projectData[slug]) {
+      setLoadingProject(slug);
+      try {
+        const response = await fetch(`/api/project/${slug}`);
+        if (!response.ok) {
+          throw new Error("Failed to load project");
+        }
+        const data = (await response.json()) as { files: PromptFileClient[] };
+        setProjectData((prev) => ({ ...prev, [slug]: data.files }));
+
+        // Reset expanded date to most recent in new project
+        const today = getTodayDate();
+        setExpandedDate(
+          data.files.some((f: PromptFileClient) => f.date === today)
+            ? today
+            : (data.files[0]?.date ?? null),
+        );
+      } catch (error) {
+        console.error("Failed to load project:", error);
+      } finally {
+        setLoadingProject(null);
+      }
+    } else {
+      // Reset expanded date to most recent in cached project
+      const files = projectData[slug];
+      const today = getTodayDate();
+      setExpandedDate(files.some((f) => f.date === today) ? today : (files[0]?.date ?? null));
+    }
   }
 
   function handleDateClick(date: string) {
@@ -51,7 +84,12 @@ export function PromptViewer({ projects, initialProject, projectData }: PromptVi
       </header>
 
       <div className="mb-6">
-        <SearchBar onChange={setSearchQuery} placeholder="Search prompts..." value={searchQuery} />
+        <SearchBar
+          isSearching={isSearching}
+          onChange={setInputValue}
+          placeholder="Search prompts..."
+          value={inputValue}
+        />
       </div>
 
       <div className="mb-6">
@@ -63,14 +101,17 @@ export function PromptViewer({ projects, initialProject, projectData }: PromptVi
       </div>
 
       <main className="rounded-lg border border-border bg-card">
-        {currentFiles.length === 0 ? (
+        {loadingProject ? (
+          <div className="p-8 text-center text-muted">Loading project data...</div>
+        ) : hasActiveSearch ? (
+          <SearchResults isSearching={isSearching} results={results} />
+        ) : currentFiles.length === 0 ? (
           <div className="p-8 text-center text-muted">No prompts found for this project.</div>
         ) : (
           <DateList
             expandedDate={expandedDate}
             files={currentFiles}
             onDateClick={handleDateClick}
-            searchQuery={searchQuery}
           />
         )}
       </main>
