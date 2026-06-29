@@ -1,4 +1,4 @@
-const baseConfig = require("@sablier/devkit/prettier");
+const baseConfig = require("@prb/devkit/prettier");
 
 /**
  * @see https://prettier.io/docs/configuration

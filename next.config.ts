@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   compress: true,
   // ISR cache duration (stale-while-revalidate)
   expireTime: 3600, // 1 hour
+  poweredByHeader: false,
+  reactCompiler: true,
+  reactStrictMode: true,
   // Image optimization
   images: {
     formats: ["image/webp"],
@@ -19,9 +22,6 @@ const nextConfig: NextConfig = {
       // },
     ],
   },
-  poweredByHeader: false,
-  reactCompiler: true,
-  reactStrictMode: true,
 };
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
