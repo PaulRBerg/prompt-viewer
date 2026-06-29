@@ -3,7 +3,7 @@ import "server-only";
 import { HttpApiBuilder } from "@effect/platform";
 import { Effect } from "effect";
 import { PromptsService, toClientPayload } from "../services/prompts-service";
-import { Api } from "./api";
+import { Api } from "./prompts-api";
 
 /**
  * PromptsApi handler implementations

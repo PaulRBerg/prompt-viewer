@@ -1,6 +1,6 @@
 import "server-only";
 
-import { HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
+import { HttpApi, HttpApiEndpoint, HttpApiGroup } from "@effect/platform";
 import { Schema } from "effect";
 import {
   BadRequestErrorSchema,
@@ -26,3 +26,5 @@ export class PromptsApi extends HttpApiGroup.make("prompts")
       .setPayload(SearchRequestSchema),
   )
   .prefix("/api/project") {}
+
+export class Api extends HttpApi.make("api").add(PromptsApi) {}
